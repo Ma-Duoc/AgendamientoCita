@@ -25,7 +25,7 @@ public class AgendamientoCita {
 
     @ManyToOne
     @JoinColumn(name = "rut_cliente", nullable = false)
-    private Cliente cliente;
+    private Paciente paciente;
 
     @ManyToOne
     @JoinColumn(name = "rut_medico", nullable = false)

@@ -6,32 +6,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "medico")
+@Table(name = "paciente")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Medico {
+public class Paciente {
 
     @Id
     @Column(unique = true, length = 13)
-    private String rut;
+    private String rut;  
 
     @Column(nullable = false, length = 50,unique = false)
-    private String nombre;
+    private String nombre;  
 
     @Column(nullable = false)
-    private String correo;
+    private String correo;  
 
     @Column(nullable = false, length = 9)
-    private String fono;
+    private String fono;  
 
-    @Column(nullable = false, length = 30)
-    private String especialidad;
+    @Column(nullable = false, columnDefinition = "TEXT")  
+    private String historialMedico;
 
     @ManyToOne
     @JoinColumn(name = "rol_id", nullable = false)
-    private Rol rol_id;
+    private Rol rol_id; 
 
 }
+
 

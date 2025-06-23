@@ -2,6 +2,8 @@ package com.AgendamientoCitas.AgendamientoCitas.Model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -12,20 +14,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "cliente")
-public class Cliente {
-
+@Table(name = "rol") // Si la tabla se llama "roles"
+public class Rol {
     @Id
-    @Column(unique = true,length = 13)
-    private String rutCliente;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int rol_id;
 
     @Column(nullable = false)
     private String nombre;
-
-    @Column(nullable = false)
-    private String correo;
-
-    @Column(nullable = false, length = 9)
-    private String fono;
 }
 

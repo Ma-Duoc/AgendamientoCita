@@ -46,12 +46,12 @@ public class AgendamientoCitaService {
         
     }
 
-    public List<AgendamientoCita> buscarPorCliente(String rutCliente) {
-    return agendamientoCitaRepository.findByClienteRutCliente(rutCliente);
+    public List<AgendamientoCita> buscarPorPaciente(String rutPaciente) {
+    return agendamientoCitaRepository.findByPacienteRut(rutPaciente);
     }
 
     public List<AgendamientoCita> buscarPorMedico(String rutMedico) {
-        return agendamientoCitaRepository.findByMedicoRutMedico(rutMedico);
+        return agendamientoCitaRepository.findByMedicoRut(rutMedico);
     }
 
     public AgendamientoCita buscarPorHorario(Integer idHorario) {

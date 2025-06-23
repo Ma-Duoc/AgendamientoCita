@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 import com.AgendamientoCitas.AgendamientoCitas.Model.AgendamientoCita;
 
 @Repository
-public interface AgendamientoCitaRepository extends JpaRepository<AgendamientoCita,Integer>{
+public interface AgendamientoCitaRepository extends JpaRepository<AgendamientoCita, Integer> {
 
-    List<AgendamientoCita> findByClienteRutCliente(String rutCliente);
+    List<AgendamientoCita> findByPacienteRut(String rut);
 
-    List<AgendamientoCita> findByMedicoRutMedico(String rutMedico);
+    List<AgendamientoCita> findByMedicoRut(String rut);
 
     Optional<AgendamientoCita> findByHorarioIdHorario(Integer idHorario);
 
