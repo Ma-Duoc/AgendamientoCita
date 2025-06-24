@@ -23,12 +23,14 @@ public class AgendamientoCitaServiceTest {
     @MockBean
     private AgendamientoCitaRepository agendamientoCitaRepository;
 
-    private final Rol rolPaciente = new Rol(1, "Paciente");
-    private final Rol rolMedico = new Rol(2, "Medico");
-    private final Paciente paciente = new Paciente("12345678-9", "Juan Pérez", "juan@mail.com", "912345678", "Sin historial", rolPaciente);
-    private final Medico medico = new Medico("98765432-1", "Dra. Soto", "soto@mail.com", "987654321", "Dermatología", rolMedico);
-    private final HorarioMedico horario = new HorarioMedico(1, medico, "10:00", true);
-    private final AgendamientoCita cita = new AgendamientoCita(1, paciente, medico, horario);
+    private final HorarioMedico horario = new HorarioMedico(1, "98765432-1", "10:00", true); // Adaptado
+
+    private final AgendamientoCita cita = new AgendamientoCita(
+        1,
+        "12345678-9", // rutPaciente
+        "98765432-1", // rutMedico
+        horario
+    );
 
     @Test
     public void testListarAgendamientos() {
@@ -95,24 +97,24 @@ public class AgendamientoCitaServiceTest {
 
     @Test
     public void testBuscarPorCliente() {
-        when(agendamientoCitaRepository.findByPacienteRut("12345678-9")).thenReturn(List.of(cita));
+        when(agendamientoCitaRepository.findByRutPaciente("12345678-9")).thenReturn(List.of(cita));
 
         List<AgendamientoCita> resultado = agendamientoCitaService.buscarPorPaciente("12345678-9");
 
         assertEquals(1, resultado.size());
-        assertEquals("12345678-9", resultado.get(0).getPaciente().getRut());
-        verify(agendamientoCitaRepository).findByPacienteRut("12345678-9");
+        assertEquals("12345678-9", resultado.get(0).getRutPaciente());
+        verify(agendamientoCitaRepository).findByRutPaciente("12345678-9");
     }
 
     @Test
     public void testBuscarPorMedico() {
-        when(agendamientoCitaRepository.findByMedicoRut("98765432-1")).thenReturn(List.of(cita));
+        when(agendamientoCitaRepository.findByRutMedico("98765432-1")).thenReturn(List.of(cita));
 
         List<AgendamientoCita> resultado = agendamientoCitaService.buscarPorMedico("98765432-1");
 
         assertEquals(1, resultado.size());
-        assertEquals("98765432-1", resultado.get(0).getMedico().getRut());
-        verify(agendamientoCitaRepository).findByMedicoRut("98765432-1");
+        assertEquals("98765432-1", resultado.get(0).getRutMedico());
+        verify(agendamientoCitaRepository).findByRutMedico("98765432-1");
     }
 
     @Test

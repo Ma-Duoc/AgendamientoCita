@@ -14,18 +14,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-
 
 @WebMvcTest(AgendamientoCitaController.class)
 public class AgendamientoCitaControllerTest {
@@ -39,27 +34,18 @@ public class AgendamientoCitaControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private Rol rolPaciente;
-    private Rol rolMedico;
-    private Paciente paciente;
-    private Medico medico;
     private HorarioMedico horario;
     private AgendamientoCita cita;
 
     @BeforeEach
     public void setup() {
-        rolPaciente = new Rol(1, "Paciente");
-        rolMedico = new Rol(2, "Medico");
-
-        paciente = new Paciente("12345678-9", "Juan Pérez", "juan@example.com", "912345678", "Sin historial", rolPaciente);
-        medico = new Medico("98765432-1", "Dra. Soto", "soto@example.com", "987654321", "Dermatología", rolMedico);
-        horario = new HorarioMedico(1, medico, "10:00", true);
-        cita = new AgendamientoCita(1, paciente, medico, horario);
+        horario = new HorarioMedico(1, "98765432-1", "10:00", true);
+        cita = new AgendamientoCita(1, "12345678-9", "98765432-1", horario);
     }
 
     @Test
     public void testListarAgendamientos() throws Exception {
-        List<AgendamientoCita> lista = Arrays.asList(cita);
+        List<AgendamientoCita> lista = List.of(cita);
         Mockito.when(agendamientoCitaService.listarAgendamientos()).thenReturn(lista);
 
         mockMvc.perform(get("/agendamientos/listar"))
@@ -128,7 +114,7 @@ public class AgendamientoCitaControllerTest {
 
         mockMvc.perform(get("/agendamientos/buscar/paciente/12345678-9"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].paciente.rut").value("12345678-9"));
+                .andExpect(jsonPath("$[0].rutPaciente").value("12345678-9"));
     }
 
     @Test
@@ -137,7 +123,7 @@ public class AgendamientoCitaControllerTest {
 
         mockMvc.perform(get("/agendamientos/buscar/medico/98765432-1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].medico.rut").value("98765432-1"));
+                .andExpect(jsonPath("$[0].rutMedico").value("98765432-1"));
     }
 
     @Test

@@ -11,9 +11,9 @@ import com.AgendamientoCitas.AgendamientoCitas.Model.AgendamientoCita;
 @Repository
 public interface AgendamientoCitaRepository extends JpaRepository<AgendamientoCita, Integer> {
 
-    List<AgendamientoCita> findByPacienteRut(String rut);
+    List<AgendamientoCita> findByRutPaciente(String rutPaciente);
 
-    List<AgendamientoCita> findByMedicoRut(String rut);
+    List<AgendamientoCita> findByRutMedico(String rutMedico);
 
     Optional<AgendamientoCita> findByHorarioIdHorario(Integer idHorario);
 

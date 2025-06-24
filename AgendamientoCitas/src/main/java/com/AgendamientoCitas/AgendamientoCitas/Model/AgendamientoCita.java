@@ -1,11 +1,11 @@
 package com.AgendamientoCitas.AgendamientoCitas.Model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -23,13 +23,11 @@ public class AgendamientoCita {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCita;
 
-    @ManyToOne
-    @JoinColumn(name = "rut_cliente", nullable = false)
-    private Paciente paciente;
+    @Column(name = "rut_cliente", nullable = false)
+    private String rutPaciente;
 
-    @ManyToOne
-    @JoinColumn(name = "rut_medico", nullable = false)
-    private Medico medico;
+    @Column(name = "rut_medico", nullable = false)
+    private String rutMedico;
     
    @OneToOne
    @JoinColumn(name = "id_horario", nullable = false, unique = true)

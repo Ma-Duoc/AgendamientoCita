@@ -21,9 +21,10 @@ public class HorarioMedico {
     @Column(unique = true)
     private int idHorario;  
 
-    @ManyToOne
-    @JoinColumn(name = "rut_medico",nullable = false)
-    private Medico medico;
+
+    @Column(name = "rut_medico", nullable = false)
+    private String rutMedico;
+
 
     @Column(nullable = false,length = 5)
     private String hora;

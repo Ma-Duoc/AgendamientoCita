@@ -53,7 +53,7 @@ public class AgendamientoCitaController {
         )
         @RequestBody AgendamientoCita agendamiento) {
 
-        if (agendamiento.getPaciente() == null || agendamiento.getMedico() == null || agendamiento.getHorario() == null) {
+        if (agendamiento.getRutPaciente() == null || agendamiento.getRutMedico() == null || agendamiento.getHorario() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Todos los campos paciente, médico y horario son obligatorios.");
         }
 
@@ -85,7 +85,7 @@ public class AgendamientoCitaController {
         }
 
         for (AgendamientoCita ag : agendamientos) {
-            if (ag.getPaciente() == null || ag.getMedico() == null || ag.getHorario() == null) {
+            if (ag.getRutPaciente() == null || ag.getRutMedico() == null || ag.getHorario() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Datos incompletos en algún agendamiento.");
             }
 
@@ -119,7 +119,7 @@ public class AgendamientoCitaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Agendamiento no encontrado.");
         }
 
-        if (!existente.getMedico().getRut().equals(agendamientoCita.getMedico().getRut())) {
+        if (!existente.getRutMedico().equals(agendamientoCita.getRutMedico())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se puede cambiar el médico de la cita.");
         }
 

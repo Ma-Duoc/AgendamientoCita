@@ -17,8 +17,8 @@ public class AgendamientoCitaModelAssembler implements RepresentationModelAssemb
         return EntityModel.of(agendamiento,
             linkTo(methodOn(AgendamientoCitaController.class).buscarPorId(agendamiento.getIdCita())).withSelfRel(),
             linkTo(methodOn(AgendamientoCitaController.class).listarAgendamientos()).withRel("todos"),
-            linkTo(methodOn(AgendamientoCitaController.class).buscarPorPaciente(agendamiento.getPaciente().getRut())).withRel("buscarPorPaciente"),
-            linkTo(methodOn(AgendamientoCitaController.class).buscarPorMedico(agendamiento.getMedico().getRut())).withRel("buscarPorMedico"),
+            linkTo(methodOn(AgendamientoCitaController.class).buscarPorPaciente(agendamiento.getRutPaciente())).withRel("buscarPorPaciente"),
+            linkTo(methodOn(AgendamientoCitaController.class).buscarPorMedico(agendamiento.getRutMedico())).withRel("buscarPorMedico"),
             linkTo(methodOn(AgendamientoCitaController.class).buscarPorHorario(agendamiento.getHorario().getIdHorario())).withRel("buscarPorHorario")
         );
     }
