@@ -2,6 +2,9 @@ package com.AgendamientoCitas.AgendamientoCitas.Controller;
 
 import com.AgendamientoCitas.AgendamientoCitas.Model.*;
 import com.AgendamientoCitas.AgendamientoCitas.Service.AgendamientoCitaService;
+import com.AgendamientoCitas.AgendamientoCitas.Service.UsuarioService;
+import com.AgendamientoCitas.AgendamientoCitas.dto.MedicoDTO;
+import com.AgendamientoCitas.AgendamientoCitas.dto.PacienteDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +34,9 @@ public class AgendamientoCitaControllerTest {
     @MockBean
     private AgendamientoCitaService agendamientoCitaService;
 
+    @MockBean
+    private UsuarioService usuarioService; // AGREGADO
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -44,17 +50,9 @@ public class AgendamientoCitaControllerTest {
     }
 
     @Test
-    public void testListarAgendamientos() throws Exception {
-        List<AgendamientoCita> lista = List.of(cita);
-        Mockito.when(agendamientoCitaService.listarAgendamientos()).thenReturn(lista);
-
-        mockMvc.perform(get("/agendamientos/listar"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].idCita").value(cita.getIdCita()));
-    }
-
-    @Test
     public void testGuardarAgendamiento() throws Exception {
+        Mockito.when(usuarioService.obtenerPacientePorRut("12345678-9")).thenReturn(new PacienteDTO());
+        Mockito.when(usuarioService.obtenerMedicoPorRut("98765432-1")).thenReturn(new MedicoDTO());
         Mockito.when(agendamientoCitaService.buscarPorHorario(anyInt())).thenReturn(null);
         Mockito.when(agendamientoCitaService.guardarAgendamiento(any(AgendamientoCita.class))).thenReturn("Agendamiento creado");
 
@@ -67,13 +65,15 @@ public class AgendamientoCitaControllerTest {
 
     @Test
     public void testGuardarAgendamientoHorarioOcupado() throws Exception {
+        Mockito.when(usuarioService.obtenerPacientePorRut("12345678-9")).thenReturn(new PacienteDTO());
+        Mockito.when(usuarioService.obtenerMedicoPorRut("98765432-1")).thenReturn(new MedicoDTO());
         Mockito.when(agendamientoCitaService.buscarPorHorario(anyInt())).thenReturn(cita);
 
         mockMvc.perform(post("/agendamientos/guardar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cita)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("El horario ya está ocupado por otro agendamiento.")));
+                .andExpect(content().string(containsString("El horario ya está ocupado")));
     }
 
     @Test

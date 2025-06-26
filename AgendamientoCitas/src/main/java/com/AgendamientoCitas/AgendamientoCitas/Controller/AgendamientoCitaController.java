@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.AgendamientoCitas.AgendamientoCitas.Model.AgendamientoCita;
 import com.AgendamientoCitas.AgendamientoCitas.Service.AgendamientoCitaService;
+import com.AgendamientoCitas.AgendamientoCitas.Service.UsuarioService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +21,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 @RequestMapping("/agendamientos")
 @Tag(name = "Agendamientos", description = "Operaciones relacionadas con el agendamiento de citas médicas")
 public class AgendamientoCitaController {
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
     private AgendamientoCitaService agendamientoCitaService;
@@ -43,28 +47,49 @@ public class AgendamientoCitaController {
     @Operation(summary = "Guardar un agendamiento", description = "Registra una nueva cita médica.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Agendamiento creado correctamente"),
-        @ApiResponse(responseCode = "400", description = "Datos faltantes o conflicto de horario")
-    })
-    public ResponseEntity<String> guardarAgendamiento(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Datos del agendamiento a registrar",
-            required = true,
-            content = @Content(schema = @Schema(implementation = AgendamientoCita.class))
-        )
-        @RequestBody AgendamientoCita agendamiento) {
+        @ApiResponse(responseCode = "400", description = "Datos faltantes o conflicto de horario")})
+    public ResponseEntity<String> guardarAgendamiento( @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Datos del agendamiento a registrar",
+        required = true,
+        content = @Content(schema = @Schema(implementation = AgendamientoCita.class)))
+    @RequestBody AgendamientoCita agendamiento) {
 
-        if (agendamiento.getRutPaciente() == null || agendamiento.getRutMedico() == null || agendamiento.getHorario() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Todos los campos paciente, médico y horario son obligatorios.");
-        }
-
-        AgendamientoCita citaExistente = agendamientoCitaService.buscarPorHorario(agendamiento.getHorario().getIdHorario());
-        if (citaExistente != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El horario ya está ocupado por otro agendamiento.");
-        }
-
-        String mensaje = agendamientoCitaService.guardarAgendamiento(agendamiento);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mensaje);
+    if (agendamiento.getRutPaciente() == null || agendamiento.getRutMedico() == null || agendamiento.getHorario() == null) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Todos los campos paciente, médico y horario son obligatorios.");
     }
+
+    // Validar existencia del paciente (desde microservicio de usuarios)
+    try {
+        if (usuarioService.obtenerPacientePorRut(agendamiento.getRutPaciente()) == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Paciente con RUT " + agendamiento.getRutPaciente() + " no se encuentra registrado.");
+        }
+    } catch (feign.FeignException.NotFound e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("Paciente con RUT " + agendamiento.getRutPaciente() + " no se encuentra registrado.");
+    }
+
+    // Validar existencia del médico (desde microservicio de usuarios)
+    try {
+        if (usuarioService.obtenerMedicoPorRut(agendamiento.getRutMedico()) == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(" Médico con RUT " + agendamiento.getRutMedico() + " no se encuentra registrado.");
+        }
+    } catch (feign.FeignException.NotFound e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("Médico con RUT " + agendamiento.getRutMedico() + " no se encuentra registrado.");
+    }
+
+    AgendamientoCita citaExistente = agendamientoCitaService.buscarPorHorario(agendamiento.getHorario().getIdHorario());
+    if (citaExistente != null) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El horario ya está ocupado por otro agendamiento.");
+    }
+
+    // Guardar el agendamiento
+    String mensaje = agendamientoCitaService.guardarAgendamiento(agendamiento);
+    return ResponseEntity.status(HttpStatus.CREATED).body(mensaje);
+}
+
 
     @PostMapping("/guardar-multiple")
     @Operation(summary = "Guardar múltiples agendamientos", description = "Registra una lista de citas médicas.")
@@ -85,18 +110,46 @@ public class AgendamientoCitaController {
         }
 
         for (AgendamientoCita ag : agendamientos) {
+            // Validación de campos obligatorios
             if (ag.getRutPaciente() == null || ag.getRutMedico() == null || ag.getHorario() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Datos incompletos en algún agendamiento.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Datos incompletos en algún agendamiento.");
             }
 
+            // Validar si el horario ya está ocupado
             if (agendamientoCitaService.buscarPorHorario(ag.getHorario().getIdHorario()) != null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El horario " + ag.getHorario().getIdHorario() + " ya está ocupado.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("El horario " + ag.getHorario().getIdHorario() + " ya está ocupado.");
+            }
+
+            // Validar existencia del paciente en el microservicio de usuarios
+            try {
+                if (usuarioService.obtenerPacientePorRut(ag.getRutPaciente()) == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Paciente con RUT " + ag.getRutPaciente() + " no está registrado.");
+                }
+            } catch (feign.FeignException.NotFound e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Paciente con RUT " + ag.getRutPaciente() + " no está registrado.");
+            }
+
+            // Validar existencia del médico en el microservicio de usuarios
+            try {
+                if (usuarioService.obtenerMedicoPorRut(ag.getRutMedico()) == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Médico con RUT " + ag.getRutMedico() + " no está registrado.");
+                }
+            } catch (feign.FeignException.NotFound e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Médico con RUT " + ag.getRutMedico() + " no está registrado.");
             }
         }
 
+        // Si pasa todas las validaciones
         String mensaje = agendamientoCitaService.guardarAgendamientos(agendamientos);
         return ResponseEntity.status(HttpStatus.CREATED).body(mensaje);
     }
+
 
     @PutMapping("/actualizar/{id}")
     @Operation(summary = "Actualizar agendamiento", description = "Permite modificar el horario de una cita médica, sin cambiar el médico asignado.")
