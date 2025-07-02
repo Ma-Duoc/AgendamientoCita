@@ -15,21 +15,11 @@ public class UsuarioService {
     @Autowired
     private UsuarioClient usuarioClient;
 
-    // Obtener lista completa de pacientes
-    public List<PacienteDTO> obtenerTodosLosPacientes() {
-        return usuarioClient.listarPacientes();
-    }
-
     // Obtener paciente por RUT
     public PacienteDTO obtenerPacientePorRut(String rut) {
         return usuarioClient.buscarPacientePorRut(rut);
     }
-
-    // Obtener lista completa de médicos
-    public List<MedicoDTO> obtenerTodosLosMedicos() {
-        return usuarioClient.listarMedicos();
-    }
-
+    
     // Obtener médico por RUT
     public MedicoDTO obtenerMedicoPorRut(String rut) {
         return usuarioClient.buscarMedicoPorRut(rut);

@@ -39,7 +39,7 @@ public class AgendamientoCitaControllerV2 {
             schema = @Schema(implementation = CollectionModel.class)
         )
     )
-    @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    @GetMapping(value = "/listar", produces = MediaTypes.HAL_JSON_VALUE)
     public ResponseEntity<CollectionModel<EntityModel<AgendamientoCita>>> listarAgendamientos() {
         List<AgendamientoCita> agendamientos = agendamientoCitaService.listarAgendamientos();
         List<EntityModel<AgendamientoCita>> agendamientosModel = agendamientos.stream()

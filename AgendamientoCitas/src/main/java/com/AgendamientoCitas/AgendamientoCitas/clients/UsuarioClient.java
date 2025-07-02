@@ -11,17 +11,12 @@ import java.util.List;
 @FeignClient(name = "gestionycreacionuser", url = "http://localhost:8081")
 public interface UsuarioClient {
 
-    // Pacientes - sólo lectura
-    @GetMapping("/pacientes/listar")
-    List<PacienteDTO> listarPacientes();
-
+    // Pacientes
     @GetMapping("/pacientes/buscar/rut/{rut}")
     PacienteDTO buscarPacientePorRut(@PathVariable("rut") String rut);
 
-    // Médicos - sólo lectura
-    @GetMapping("/medicos/listar")
-    List<MedicoDTO> listarMedicos();
-
+    // Médicos
     @GetMapping("/medicos/buscar/rut/{rut}")
     MedicoDTO buscarMedicoPorRut(@PathVariable("rut") String rut);
 }
+

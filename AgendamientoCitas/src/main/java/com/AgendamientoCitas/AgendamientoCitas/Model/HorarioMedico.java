@@ -17,7 +17,7 @@ public class HorarioMedico {
 
     @Id
     @Column(unique = true)
-    private int idHorario;  
+    private int idHorario;
 
 
     @Column(name = "rut_medico", nullable = false)

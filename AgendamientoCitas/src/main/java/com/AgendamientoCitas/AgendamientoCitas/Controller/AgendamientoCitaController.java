@@ -49,8 +49,7 @@ public class AgendamientoCitaController {
         @ApiResponse(responseCode = "201", description = "Agendamiento creado correctamente"),
         @ApiResponse(responseCode = "400", description = "Datos faltantes o conflicto de horario")})
     public ResponseEntity<String> guardarAgendamiento( @io.swagger.v3.oas.annotations.parameters.RequestBody(
-        description = "Datos del agendamiento a registrar",
-        required = true,
+        description = "Datos del agendamiento a registrar",required = true,
         content = @Content(schema = @Schema(implementation = AgendamientoCita.class)))
     @RequestBody AgendamientoCita agendamiento) {
 
@@ -97,10 +96,8 @@ public class AgendamientoCitaController {
         @ApiResponse(responseCode = "201", description = "Agendamientos creados correctamente"),
         @ApiResponse(responseCode = "400", description = "Datos faltantes o conflictos de horario en uno o más registros")
     })
-    public ResponseEntity<String> guardarAgendamientos(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Lista de agendamientos a registrar",
-            required = true,
+    public ResponseEntity<String> guardarAgendamientos(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Lista de agendamientos a registrar",required = true,
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = AgendamientoCita.class)))
         )
         @RequestBody List<AgendamientoCita> agendamientos) {
@@ -161,8 +158,7 @@ public class AgendamientoCitaController {
     public ResponseEntity<String> actualizarAgendamiento(
         @Parameter(description = "ID del agendamiento a actualizar", required = true) @PathVariable Integer id,
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Datos actualizados del agendamiento",
-            required = true,
+            description = "Datos actualizados del agendamiento",required = true,
             content = @Content(schema = @Schema(implementation = AgendamientoCita.class))
         )
         @RequestBody AgendamientoCita agendamientoCita) {
@@ -250,8 +246,7 @@ public class AgendamientoCitaController {
         @ApiResponse(responseCode = "204", description = "No se encontraron citas para el médico")
     })
     public ResponseEntity<List<AgendamientoCita>> buscarPorMedico(
-        @Parameter(description = "RUT del médico", required = true)
-        @PathVariable String rutMedico) {
+        @Parameter(description = "RUT del médico", required = true) @PathVariable String rutMedico) {
 
         List<AgendamientoCita> lista = agendamientoCitaService.buscarPorMedico(rutMedico);
         if (lista.isEmpty()) {
@@ -267,8 +262,7 @@ public class AgendamientoCitaController {
             content = @Content(schema = @Schema(implementation = AgendamientoCita.class))),
         @ApiResponse(responseCode = "404", description = "Cita no encontrada para el horario indicado")
     })
-    public ResponseEntity<AgendamientoCita> buscarPorHorario(
-        @Parameter(description = "ID del horario", required = true)
+    public ResponseEntity<AgendamientoCita> buscarPorHorario(@Parameter(description = "ID del horario", required = true)
         @PathVariable Integer idHorario) {
 
         AgendamientoCita agendamiento = agendamientoCitaService.buscarPorHorario(idHorario);
